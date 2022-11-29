@@ -33,7 +33,7 @@ public class Main {
                     Element elem = (Element) node;
            // elem.getElementsByTagName("ID").item(0).getChildNodes().item(0).getNodeValue();
                     // Get the value of the ID attribute.
-                   String ID = elem.getElementsByTagName("ID").item(0).getChildNodes().item(0).getNodeValue();
+                   String ID = node.getAttributes().getNamedItem("ID").getNodeValue();
                    //node.getAttributes().getNamedItem("ID").getNodeValue();
                     // Get the value of all sub-elements.
                     String author = elem.getElementsByTagName("Author")
@@ -100,8 +100,8 @@ public class Main {
                 Element ID = doc.createElement("ID");
                 System.out.println("Enter the Book ID:");
                 String idValue = in.next();
-                Text idVal = doc.createTextNode(idValue);
-                ID.appendChild(idVal);
+                book.setAttribute("ID",idValue);
+
 
                 //create author node and append its value
                 Element author = doc.createElement("Author");
@@ -145,7 +145,7 @@ public class Main {
                 Text DescriptionVal = doc.createTextNode(DescriptionValue);
                 Description.appendChild(DescriptionVal);
                 //  apend the attribute to the  father
-                book.appendChild(ID);
+               // book.appendChild(ID);
                 book.appendChild(author);
                 book.appendChild(Title);
                 book.appendChild(Genre);
@@ -161,6 +161,7 @@ public class Main {
 
             }
             save(doc, path);
+        System.out.println("File build successfully..");
 
 
     }
@@ -191,8 +192,7 @@ public class Main {
             Element ID = doc.createElement("ID");
             System.out.println("Enter the Book ID:");
             String idValue = in.next();
-            ID.setTextContent(idValue);
-            book.appendChild(ID);
+            book.setAttribute("ID",idValue);
 
             Element Author = doc.createElement("Author");
             System.out.println("Enter Author name:");
@@ -254,7 +254,7 @@ public class Main {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-        System.out.println("mission done sucessfely");
+        System.out.println("File Saved successfully....");
     }
     public static void searchByAuthor(String Author ) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -276,14 +276,20 @@ public class Main {
         }
         NodeList nodeList = document.getDocumentElement().getChildNodes();
         nodeList = document.getElementsByTagName("Author");
+        boolean flag = false;
         if(nodeList.getLength()==0){
             System.out.println("Author not found");
         }
         else {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 String value = nodeList.item(i).getTextContent();
-                if (value.equalsIgnoreCase(Author))
+                if (value.equalsIgnoreCase(Author)) {
+                    flag = true;
                     System.out.println("The content of record: " + nodeList.item(i).getParentNode().getTextContent());
+                }
+            }
+            if(!flag){
+                System.out.println("The Author is not found..");
             }
         }
     }
@@ -307,14 +313,20 @@ public class Main {
         }
         NodeList nodeList = document.getDocumentElement().getChildNodes();
         nodeList = document.getElementsByTagName("Title");
+        boolean flag = false;
         if(nodeList.getLength()==0){
             System.out.println("Title not found");
         }
         else {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 String value = nodeList.item(i).getTextContent();
-                if (value.equalsIgnoreCase(title))
+                if (value.equalsIgnoreCase(title)) {
+                    flag = true;
                     System.out.println("The content of record: " + nodeList.item(i).getParentNode().getTextContent());
+                }
+            }
+            if (!flag){
+                System.out.println("The title is not found..");
             }
         }
     }
@@ -336,15 +348,26 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        NodeList nodeList = document.getDocumentElement().getChildNodes();
-        nodeList = document.getElementsByTagName("ID");
+         NodeList nodeList = document.getDocumentElement().getChildNodes();
+        boolean flag = false;
+        //System.out.println(nodeList);
         for (int i = 0; i < nodeList.getLength(); i++) {
-            String value=nodeList.item(i).getTextContent();
-            if(value.equalsIgnoreCase(ID)) {
-                Node n = nodeList.item(i).getParentNode();
-                document.getDocumentElement().removeChild(n);
-                save(document, path);
+            Node node = nodeList.item(i);
+            if (node.getNodeType()== Node.ELEMENT_NODE){
+                Element v =(Element) node;
+                String value=node.getAttributes().getNamedItem("ID").getNodeValue();
+                if(value.equalsIgnoreCase(ID)) {
+                    //Node n = nodeList.item(i).getParentNode();
+                    document.getDocumentElement().removeChild(node);
+                    flag = true;
+                    save(document, path);
+                    System.out.println("The record deleted successfully..");
+                }
             }
+
+        }
+        if (!flag){
+            System.out.println("ID record not found.");
         }
     }
     public static void main(String[] args) {
