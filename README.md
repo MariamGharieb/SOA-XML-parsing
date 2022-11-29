@@ -14,7 +14,7 @@ For the following book structure, build an XML document and then retrieve data f
     <Description>A guide for developers on how to create applications using XML.</ Description>
   </Book>
 </Catalogue>
-Your program should do the following: [ 10 Grades]
+Your program should do the following:
 1-	Build an XML document.			
 2-	Ask the user to enter the number of books s/he wants to store data about.        
 3-	Take book data from the user. 				
